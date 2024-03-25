@@ -1,120 +1,116 @@
 import './pages/index.css';
-import { initialCards, deleteButton, like, handleFormSubmitNewCard, createCard} from './scripts/cards';
-import {openModal, closeModal, closeModalOverlay} from './scripts/modal';
+import {deleteCard, like, createCard} from './scripts/cards';
+import {openModal, closeModal} from './scripts/modal';
+import { initialCards } from './scripts/initialCards';
 
 //Переменные
 const profileEditButton = document.querySelector('.profile__edit-button');
 const popupTypeEdit = document.querySelector('.popup_type_edit');
-const popupClose = document.querySelector('.popup__close');
+const profileCloseButton = document.querySelector('.popup__close');
 const profileAddButton = document.querySelector('.profile__add-button');
 const popupTypeNewCard = document.querySelector('.popup_type_new-card');
-let popupCloseTwo = popupTypeNewCard.querySelector('.popup__close');
+const cardsCloseButton = popupTypeNewCard.querySelector('.popup__close');
 const popupTypeImage = document.querySelector('.popup_type_image');
 const popupImage = document.querySelector('.popup__image');
-let popupCloseThree = popupTypeImage.querySelector('.popup__close');
-const formElementNewCard = document.querySelector('form[name = "new-place"]');
+const imageCloseButton = popupTypeImage.querySelector('.popup__close');
+const cardsForm = document.forms["new-place"];
 const cardsContainer = document.querySelector('.places__list');
-const formElement = document.querySelector('form[name = "edit-profile"]');
-const nameInput = document.querySelector('form[name="edit-profile"] input[name="name"]');
-const jobInput = document.querySelector('form[name="edit-profile"] input[name="description"]');
+const profileForm = document.forms["edit-profile"];
+const nameInput = document.forms['edit-profile'].elements.name;
+const jobInput = document.forms['edit-profile'].elements.description;
+const placesList = document.querySelector('.places__list');
+const profileTitle = document.querySelector('.profile__title');
+const profileDescription = document.querySelector('.profile__description');
 
-
-//Функции
-
+//Функция объявления карточки
 function addCard (cardElement) {
-    cardsContainer.append(cardElement); //Функция объявления карточки
+    cardsContainer.append(cardElement);
 };
 
-function openCard(event) {                                                                       
+//Функция открытия карточки
+function openCard(event) { 
     const imageUrl = event.target.src;
+    const altText = event.target.alt;
+    const card = event.target.closest('.card');
+    const cardTitle = card.querySelector('.card__title').textContent;
+
     popupImage.src = imageUrl;
-    openModal(popupTypeImage);  //Функция открытия карточки
+    popupImage.alt = altText;
+
+    document.querySelector('.popup__caption').textContent = cardTitle;
+
+    openModal(popupTypeImage);  
 };
 
+//Функция выведения карточек на страницу
 function renderCards() {
     initialCards.forEach(function(item) {
-        const card = createCard(item.link, item.name, item.altText, deleteButton, like, openCard);
-        addCard(card);//Функция выведения карточки на страницу
-    });
-};
-  
-function closeModalEsc(popupType) {
-    window.addEventListener('keydown', function(event) {
-        if (event.key === 'Escape') {
-            closeModal(popupType);
-        };
+        const card = createCard(item.link, item.name, item.altText, deleteCard, like, openCard);
+        addCard(card);
     });
 };
 
-document.addEventListener('DOMContentLoaded', renderCards); // Вызов функции renderCards при загрузке страницы    
-
-//Закрытие и открытие модального окна "Редактировать профиль"
-
-profileEditButton.addEventListener('click', function(event){                          
-    openModal(popupTypeEdit);
-});
-
-popupClose.addEventListener('click', function(event){                                   
-    closeModal(popupTypeEdit);
-});
-
-window.onclick = function(event) {                                                     //index.js
-    if (event.target == popupTypeNewCard) {
-        closeModal(popupTypeNewCard);
-    } else if (event.target == popupTypeEdit) {
-        closeModal(popupTypeEdit);
-    } else if (event.target == popupTypeImage) {
-        closeModal(popupTypeImage);
-    }
-};
-
-window.addEventListener('keydown', closeModalEsc(popupTypeEdit));
-
-//Закрытие и открытие модального окна "Новое место"
-
-profileAddButton.addEventListener('click', function(){                                  
-    openModal(popupTypeNewCard);
-});
-
-popupCloseTwo.addEventListener('click', function(){                                     
-    closeModal(popupTypeNewCard);
-});
-
-window.addEventListener('keydown', closeModalEsc(popupTypeNewCard));
-
-//Закрытие и открытие модального окна "Картинок"
-
-popupCloseThree.addEventListener('click', function(event){                            
-    closeModal(popupTypeImage);
-});
-
-window.addEventListener('keydown', closeModalEsc(popupTypeImage));
-
-document.addEventListener('DOMContentLoaded', function() {                                     
-    let profileTitle = document.querySelector('.profile__title').textContent;
-    let profileDescription = document.querySelector('.profile__description').textContent;
-
-    nameInput.value = profileTitle;
-    jobInput.value = profileDescription;
-});
-
-
-function handleFormSubmit(evt) {
+//Функция редоктирования профиля с полями заполнения
+function handleProfileFormSubmit(evt) {
     evt.preventDefault(); 
 
     let nameValue = nameInput.value;
     let jobValue = jobInput.value;
 
-    let profileTitle = document.querySelector('.profile__title');
-    let profileDescription = document.querySelector('.profile__description');
-
     profileTitle.textContent = nameValue;
     profileDescription.textContent = jobValue;
 
     closeModal(popupTypeEdit);
-}
+};
 
-formElement.addEventListener('submit', handleFormSubmit);                                       
-formElementNewCard.addEventListener('submit', handleFormSubmitNewCard);                         
+//Функция создания новой карточки с полями заполнения
+function handleNewCardFormSubmit(evt) {
+    evt.preventDefault(); 
+    
+    const placeNameInput = document.forms['new-place'].elements['place-name'];
+    const linkInput = document.forms['new-place'].elements.link;
+    const placeNameValue = placeNameInput.value;
+    const linkValue = linkInput.value;
+  
+    const newCard = createCard(linkValue, placeNameValue, placeNameValue, deleteCard, like, openCard);
+  
+    placesList.prepend(newCard);
+    closeModal(popupTypeNewCard);
+    cardsForm.reset();
+  };
 
-export {formElementNewCard, popupTypeNewCard, openCard};
+// Вызов функции renderCards при загрузке страницы      
+document.addEventListener('DOMContentLoaded', renderCards); 
+
+//Вызов функции открытия модального окна "Редактировать профиль"
+profileEditButton.addEventListener('click', function(event){    
+    nameInput.value = profileTitle.textContent;
+    jobInput.value = profileDescription.textContent;                      
+    openModal(popupTypeEdit);
+});
+
+//Вызов функции закрытия модального окна "Редактировать профиль"
+profileCloseButton.addEventListener('click', function(event){
+    closeModal(popupTypeEdit);
+});
+
+//Вызов функции открытия модального окна "Новое место"
+profileAddButton.addEventListener('click', function(){
+    openModal(popupTypeNewCard);
+});
+
+//Вызов функции закрытия модального окна "Новое место"
+cardsCloseButton.addEventListener('click', function(){
+    closeModal(popupTypeNewCard);
+});
+
+//Вызов функции открытия модального окна "Картинок"
+imageCloseButton.addEventListener('click', function(event){                            
+    closeModal(popupTypeImage);
+});
+
+//Навешивание обработчика событий на "Редактирование профиля" (что бы при нажатии кнопки "Сохранить", значения сохранялись в поля ввода)
+profileForm.addEventListener('submit', handleProfileFormSubmit);
+
+//Навешивание обработчика событий на "Новая карточка" (что бы при нажатии кнопки "Сохранить", значения сохранялись в поля ввода)
+cardsForm.addEventListener('submit', handleNewCardFormSubmit);
