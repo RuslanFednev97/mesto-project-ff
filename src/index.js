@@ -1,9 +1,10 @@
 import './pages/index.css';
 import {deleteCard, like, createCard} from './scripts/cards';
-import {openModal, closeModal} from './scripts/modal';
+import {popupOpen, popupClose, closeModalOnOverlayClick} from './scripts/modal';
 import { initialCards } from './scripts/initialCards';
 
 //Переменные
+const popup = document.querySelectorAll('.popup');
 const profileEditButton = document.querySelector('.profile__edit-button');
 const popupTypeEdit = document.querySelector('.popup_type_edit');
 const profileCloseButton = document.querySelector('.popup__close');
@@ -21,6 +22,7 @@ const jobInput = document.forms['edit-profile'].elements.description;
 const placesList = document.querySelector('.places__list');
 const profileTitle = document.querySelector('.profile__title');
 const profileDescription = document.querySelector('.profile__description');
+const popupCaption = document.querySelector('.popup__caption');
 
 //Функция объявления карточки
 function addCard (cardElement) {
@@ -37,9 +39,9 @@ function openCard(event) {
     popupImage.src = imageUrl;
     popupImage.alt = altText;
 
-    document.querySelector('.popup__caption').textContent = cardTitle;
+    popupCaption.textContent = cardTitle;
 
-    openModal(popupTypeImage);  
+    popupOpen(popupTypeImage);  
 };
 
 //Функция выведения карточек на страницу
@@ -54,28 +56,28 @@ function renderCards() {
 function handleProfileFormSubmit(evt) {
     evt.preventDefault(); 
 
-    let nameValue = nameInput.value;
-    let jobValue = jobInput.value;
+    const nameValue = nameInput.value;
+    const jobValue = jobInput.value;
 
     profileTitle.textContent = nameValue;
     profileDescription.textContent = jobValue;
 
-    closeModal(popupTypeEdit);
+    popupClose(popupTypeEdit);
 };
 
 //Функция создания новой карточки с полями заполнения
 function handleNewCardFormSubmit(evt) {
     evt.preventDefault(); 
     
-    const placeNameInput = document.forms['new-place'].elements['place-name'];
-    const linkInput = document.forms['new-place'].elements.link;
+    const placeNameInput = cardsForm.elements['place-name'];
+    const linkInput = cardsForm.elements.link;
     const placeNameValue = placeNameInput.value;
     const linkValue = linkInput.value;
   
     const newCard = createCard(linkValue, placeNameValue, placeNameValue, deleteCard, like, openCard);
   
     placesList.prepend(newCard);
-    closeModal(popupTypeNewCard);
+    popupClose(popupTypeNewCard);
     cardsForm.reset();
   };
 
@@ -86,28 +88,36 @@ document.addEventListener('DOMContentLoaded', renderCards);
 profileEditButton.addEventListener('click', function(event){    
     nameInput.value = profileTitle.textContent;
     jobInput.value = profileDescription.textContent;                      
-    openModal(popupTypeEdit);
+    popupOpen(popupTypeEdit);
 });
 
 //Вызов функции закрытия модального окна "Редактировать профиль"
 profileCloseButton.addEventListener('click', function(event){
-    closeModal(popupTypeEdit);
+    popupClose(popupTypeEdit);
 });
 
 //Вызов функции открытия модального окна "Новое место"
 profileAddButton.addEventListener('click', function(){
-    openModal(popupTypeNewCard);
+    popupOpen(popupTypeNewCard);
 });
 
 //Вызов функции закрытия модального окна "Новое место"
 cardsCloseButton.addEventListener('click', function(){
-    closeModal(popupTypeNewCard);
+    popupClose(popupTypeNewCard);
 });
 
 //Вызов функции открытия модального окна "Картинок"
 imageCloseButton.addEventListener('click', function(event){                            
-    closeModal(popupTypeImage);
+    popupClose(popupTypeImage);
 });
+
+//Вешаем обработчик событий на все попапы и вызываем функцию закрытия при клике на оверлей
+// popup.forEach(popupElement => {
+//     // Добавление обработчика событий один раз при инициализации
+//     popupElement.addEventListener('click', closeModalOnOverlayClick);
+//     // Сохранение ссылки на обработчик, чтобы его можно было удалить позже
+//     popupElement._closeModalHandler = closeModalOnOverlayClick;
+// });
 
 //Навешивание обработчика событий на "Редактирование профиля" (что бы при нажатии кнопки "Сохранить", значения сохранялись в поля ввода)
 profileForm.addEventListener('submit', handleProfileFormSubmit);
