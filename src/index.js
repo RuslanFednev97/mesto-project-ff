@@ -1,9 +1,10 @@
 import './pages/index.css';
 import {deleteCard, like, createCard} from './scripts/cards';
-import {popupOpen, popupClose} from './scripts/modal';
+import {openPopup, closePopup, closeModalOnOverlayClick} from './scripts/modal';
 import { initialCards } from './scripts/initialCards';
 
 //Переменные
+const popups = document.querySelectorAll('.popup');
 const profileEditButton = document.querySelector('.profile__edit-button');
 const popupTypeEdit = document.querySelector('.popup_type_edit');
 const profileCloseButton = document.querySelector('.popup__close');
@@ -16,8 +17,8 @@ const imageCloseButton = popupTypeImage.querySelector('.popup__close');
 const cardsForm = document.forms["new-place"];
 const cardsContainer = document.querySelector('.places__list');
 const profileForm = document.forms["edit-profile"];
-const nameInput = document.forms['edit-profile'].elements.name;
-const jobInput = document.forms['edit-profile'].elements.description;
+const nameInput = profileForm.elements.name;
+const jobInput = profileForm.elements.description;
 const placesList = document.querySelector('.places__list');
 const profileTitle = document.querySelector('.profile__title');
 const profileDescription = document.querySelector('.profile__description');
@@ -40,7 +41,7 @@ function openCard(event) {
 
     popupCaption.textContent = cardTitle;
 
-    popupOpen(popupTypeImage);  
+    openPopup(popupTypeImage);  
 };
 
 //Функция выведения карточек на страницу
@@ -61,7 +62,7 @@ function handleProfileFormSubmit(evt) {
     profileTitle.textContent = nameValue;
     profileDescription.textContent = jobValue;
 
-    popupClose(popupTypeEdit);
+    closePopup(popupTypeEdit);
 };
 
 //Функция создания новой карточки с полями заполнения
@@ -76,7 +77,7 @@ function handleNewCardFormSubmit(evt) {
     const newCard = createCard(linkValue, placeNameValue, placeNameValue, deleteCard, like, openCard);
   
     placesList.prepend(newCard);
-    popupClose(popupTypeNewCard);
+    closePopup(popupTypeNewCard);
     cardsForm.reset();
   };
 
@@ -87,28 +88,31 @@ document.addEventListener('DOMContentLoaded', renderCards);
 profileEditButton.addEventListener('click', function(event){    
     nameInput.value = profileTitle.textContent;
     jobInput.value = profileDescription.textContent;                      
-    popupOpen(popupTypeEdit);
+    openPopup(popupTypeEdit);
 });
 
 //Вызов функции закрытия модального окна "Редактировать профиль"
 profileCloseButton.addEventListener('click', function(event){
-    popupClose(popupTypeEdit);
+    closePopup(popupTypeEdit);
 });
 
 //Вызов функции открытия модального окна "Новое место"
 profileAddButton.addEventListener('click', function(){
-    popupOpen(popupTypeNewCard);
+    openPopup(popupTypeNewCard);
 });
 
 //Вызов функции закрытия модального окна "Новое место"
 cardsCloseButton.addEventListener('click', function(){
-    popupClose(popupTypeNewCard);
+    closePopup(popupTypeNewCard);
 });
 
 //Вызов функции открытия модального окна "Картинок"
 imageCloseButton.addEventListener('click', function(event){                            
-    popupClose(popupTypeImage);
+    closePopup(popupTypeImage);
 });
+
+//Навышиваем на все попапы обработчик
+popups.forEach(closeModalOnOverlayClick);
 
 //Навешивание обработчика событий на "Редактирование профиля" (что бы при нажатии кнопки "Сохранить", значения сохранялись в поля ввода)
 profileForm.addEventListener('submit', handleProfileFormSubmit);
