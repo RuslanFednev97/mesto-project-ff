@@ -36,4 +36,4 @@ function closeModalOnOverlayClick(popup) {
     });
 };
 
-export {popupOpen, popupClose, closeModalOnOverlayClick};
+export {popupOpen, popupClose};

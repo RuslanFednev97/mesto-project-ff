@@ -1,10 +1,9 @@
 import './pages/index.css';
 import {deleteCard, like, createCard} from './scripts/cards';
-import {popupOpen, popupClose, closeModalOnOverlayClick} from './scripts/modal';
+import {popupOpen, popupClose} from './scripts/modal';
 import { initialCards } from './scripts/initialCards';
 
 //Переменные
-const popup = document.querySelectorAll('.popup');
 const profileEditButton = document.querySelector('.profile__edit-button');
 const popupTypeEdit = document.querySelector('.popup_type_edit');
 const profileCloseButton = document.querySelector('.popup__close');
@@ -110,14 +109,6 @@ cardsCloseButton.addEventListener('click', function(){
 imageCloseButton.addEventListener('click', function(event){                            
     popupClose(popupTypeImage);
 });
-
-//Вешаем обработчик событий на все попапы и вызываем функцию закрытия при клике на оверлей
-// popup.forEach(popupElement => {
-//     // Добавление обработчика событий один раз при инициализации
-//     popupElement.addEventListener('click', closeModalOnOverlayClick);
-//     // Сохранение ссылки на обработчик, чтобы его можно было удалить позже
-//     popupElement._closeModalHandler = closeModalOnOverlayClick;
-// });
 
 //Навешивание обработчика событий на "Редактирование профиля" (что бы при нажатии кнопки "Сохранить", значения сохранялись в поля ввода)
 profileForm.addEventListener('submit', handleProfileFormSubmit);
