@@ -8,12 +8,6 @@ function openPopup(popup) {
 function closePopup(popup) {
     document.removeEventListener('keydown', handleEscape);
     popup.classList.remove('popup_is-opened');
-
-    // Вызываем функцию очистки, если она была установлена
-    if (typeof popup._onCloseCleanup === 'function') {
-        popup._onCloseCleanup();
-        delete popup._onCloseCleanup; // Удаляем ссылку на функцию, чтобы избежать утечек памяти
-    }
 };
 
 //Функция закрытия модального окна при нажатии на Esc
