@@ -20,3 +20,45 @@
     text-align: center;
   }
 }
+
+.popup__button_disabled {
+  opacity: 0.8;
+  pointer-events: none;
+}
+
+.form__field {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
+
+.popup__error_visible {
+  display: block;
+  color: red;
+  font-size: 12px;
+  margin-top: 10px;
+  line-height: 14.52px;
+}
+
+.popup__input.popup__input_type_error {
+  border-bottom: 1px solid red;
+}
+
+/* изменения */
+.card__like-container {
+  display: grid;
+  grid-template-rows: auto 1fr; /* This will align the count to the right */
+  justify-content: center;
+  align-items: center;
+  gap: 3px;
+}
+
+.card__like-count {
+  font-family: Inter;
+  font-size: 13px;
+  font-weight: 400;
+  line-height: 15.73px;
+  text-align: center;
+  align-self: center;
+  margin: auto;
+}
