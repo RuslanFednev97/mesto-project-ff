@@ -21,11 +21,6 @@
   }
 }
 
-.popup__button_disabled {
-  opacity: 0.8;
-  pointer-events: none;
-}
-
 .form__field {
   position: relative;
   display: flex;

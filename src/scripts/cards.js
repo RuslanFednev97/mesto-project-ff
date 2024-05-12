@@ -1,6 +1,4 @@
 import { apiDeleteCard, putLike, removeLike } from "./api.js";
-import { openPopup } from "./modal";
-import { cardState } from "../index.js";
 
 //Функция удаления карточки
 function deleteCard(cardId) {
@@ -19,6 +17,7 @@ function deleteCard(cardId) {
   }
 }
 
+
 //Функция лайка карточки
 const performActionLike = (like, cardId) => {
   const cardLikeCount = like.closest('.places__item').querySelector('.card__like-count'); 
@@ -33,43 +32,37 @@ const performActionLike = (like, cardId) => {
   })
 }
 
-//Функция проверки карточки (моя или нет)
-function checkDeleteCard(deleteButton, ownerId, userId, popupDelete, cardId) {
-  if (ownerId === userId) {
-    deleteButton.addEventListener('click', () => {
-      openPopup(popupDelete);
-      cardState.currentCardId = cardId; // Обновляем ID карточки при каждом вызове попапа
-          });
-  } else {
-    deleteButton.classList.add('card__delete-button-unactive');
-  }
-}
-
 //Функция добавления карточек из сервера
-function createCard(link, name, altText, likes, performActionLike, openCard, ownerId, userId, cardId, cardLikes) {        
+function createCard(card, performActionLike, openCard, handleCardDeleteRequest, userId) {        
   const templateCards = document.querySelector('#card-template').content;
   const cardElement = templateCards.querySelector('.places__item').cloneNode(true);
   const cardImage = cardElement.querySelector('.card__image');
   const cardLikeCount = cardElement.querySelector('.card__like-count');
-  const popupDelete = document.querySelector('.popup__delete');
 
-  cardImage.src = link;
-  cardElement.querySelector('.card__title').textContent = name;
-  cardImage.alt = altText;
-  cardLikeCount.textContent = likes;
+  cardImage.src = card.link;
+  cardElement.querySelector('.card__title').textContent = card.name;
+  cardImage.alt = card.name;
+  cardLikeCount.textContent = card.likes.length;
 
   const cardDeleteButton = cardElement.querySelector('.card__delete-button');
   const likeButton = cardElement.querySelector('.card__like-button');
-  const isLiked = cardLikes.some(likes => likes._id === userId); 
+  const isLiked = card.likes.some(likes => likes._id === userId); 
   if (isLiked) {
     likeButton.classList.add('card__like-button_is-active');
   }
    
-  cardElement.setAttribute('data-card-id', cardId);
-  likeButton.addEventListener('click', () => performActionLike(likeButton, cardId));
+  cardElement.setAttribute('data-card-id', card._id);
+  likeButton.addEventListener('click', () => performActionLike(likeButton, card._id));
   cardImage.addEventListener('click', openCard);
-  checkDeleteCard(cardDeleteButton, ownerId, userId, popupDelete, cardId);
+
+  if(card.owner._id === userId)
+    {
+      cardDeleteButton.addEventListener('click', () => handleCardDeleteRequest(card._id, cardElement));
+    } else {
+      cardDeleteButton.classList.add('card__delete-button-unactive');
+    }
   
+
   return cardElement;
 };
 

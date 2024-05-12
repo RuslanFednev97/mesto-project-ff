@@ -4,13 +4,6 @@ const config = {
             authorization: '24b8b0d1-481d-4ff4-84c2-2d32056579ad'     
         }
       };
-    
-
-// export const handleResponse = (response) => {
-//     if (response.ok) {
-//         return response.json();
-//     }
-// }
 
 const handleResponse = (res) => {
     if (res.ok) {
@@ -27,6 +20,7 @@ export const userInfo = () => {
         headers: config.headers
     })
         .then(handleResponse)
+        .catch(error => console.error('Ошибка при загрузке информации о пользователе:', error));
 }
 
 //Загрузка карточек с сервера
@@ -35,6 +29,7 @@ export const card = () => {
         headers: config.headers
     })
         .then(handleResponse)
+        .catch(error => console.error('Ошибка при загрузке информации о пользователе:', error));
 }
 
 // Редактирование профиля
@@ -51,7 +46,7 @@ export const editProfile = (dataName, dataJob) => {
         })
       })
           .then(handleResponse)
-          
+          .catch(error => console.error('Ошибка при загрузке информации о пользователе:', error));
 }
 
 // Добавление новой карточки
@@ -65,6 +60,7 @@ export const addingCard = (data) => {
         body: JSON.stringify(data)
       })
       .then(handleResponse)
+      .catch(error => console.error('Ошибка при загрузке информации о пользователе:', error));
 }
 
 //Удаление карточки
@@ -76,6 +72,7 @@ export const apiDeleteCard = (cardId) => {
       }
     })
     .then(handleResponse)
+    .catch(error => console.error('Ошибка при загрузке информации о пользователе:', error));
 }
 
 //Лайк карточки
@@ -87,6 +84,7 @@ export const putLike = (cardId) => {
       }
     })
     .then(handleResponse)
+    .catch(error => console.error('Ошибка при загрузке информации о пользователе:', error));
   };
   
 //Удаление лайка карточки
@@ -98,6 +96,7 @@ export const removeLike = (cardId) => {
       }
     })
     .then(handleResponse)
+    .catch(error => console.error('Ошибка при загрузке информации о пользователе:', error));
   };
 
 //Обновление аватара
@@ -111,4 +110,5 @@ export const patchAvatar = (data) => {
         body: JSON.stringify(data)
       })
       .then(handleResponse)
+      .catch(error => console.error('Ошибка при загрузке информации о пользователе:', error));
 }

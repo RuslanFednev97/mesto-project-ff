@@ -1,3 +1,13 @@
+const updateButtonState = (buttonElement, isActive, inactiveButtonClass) => {
+    if (isActive) {
+        buttonElement.classList.remove(inactiveButtonClass);
+        buttonElement.disabled = false;
+    } else {
+        buttonElement.classList.add(inactiveButtonClass);
+        buttonElement.disabled = true;
+    }
+};
+
 //Добавляет класс и сообщение ошибки
 const showInputError = (formElement, inputElement, errorMessage, inputErrorClass, errorClass) => {
     const errorElement = formElement.querySelector(`.${inputElement.id}-error`);
@@ -30,14 +40,10 @@ const checkInputValidity = (formElement, inputElement, inputErrorClass, errorCla
 
 //Активирует или деактивирует кнопку
 const toggleButtonState = (inputList, buttonElement, inactiveButtonClass) => {
-    if (hasInvalidInput(inputList)) {
-        buttonElement.classList.add(inactiveButtonClass);
-        buttonElement.disabled = true;
-    } else {
-        buttonElement.classList.remove(inactiveButtonClass);
-        buttonElement.disabled = false;
-    }
+    const isButtonActive = !hasInvalidInput(inputList);
+    updateButtonState(buttonElement, isButtonActive, inactiveButtonClass);
 };
+
 
 
 //Устанавливает обработчики событий для элементов формы, включая проверку валидности ввода и изменение состояния кнопки.
@@ -57,38 +63,13 @@ const setEventListeners = (formElement, {inputSelector, submitButtonSelector, in
 const enableValidation = ({formSelector, inputSelector, submitButtonSelector, inactiveButtonClass, inputErrorClass, errorClass}) => {
     const formList = Array.from(document.querySelectorAll(formSelector));
     formList.forEach((formElement) => {
-        formElement.addEventListener('submit', (evt) => {
-            evt.preventDefault();
-        });
         setEventListeners(formElement, {inputSelector, submitButtonSelector, inactiveButtonClass, inputErrorClass, errorClass});
     });
 };
 
 //Проверяет наличие невалидных вводов в списке элементов формы
 function hasInvalidInput(inputList) {
-    return inputList.some(function(inputElement) {
-        let regex;
-        switch (inputElement.name) {
-            case 'name':
-                regex = /^[a-zA-Zа-яА-Я\s-]{2,40}$/;
-                break;
-            case 'description':
-                regex = /^[a-zA-Zа-яА-Я\s-]{2,200}$/;
-                break;
-            case 'place-name':
-                regex = /^[a-zA-Zа-яА-Я\s-]{2,30}$/;
-                break;
-            case 'link':
-                regex = /^(ftp|http|https):\/\/[^ "]+$/;
-                break;
-            case 'url':
-                regex = /^(ftp|http|https):\/\/[^ "]+$/;
-                break;
-            default:
-                return false;
-        }
-        return !regex.test(inputElement.value);
-    });
+    return inputList.some(inputElement => !inputElement.checkValidity());
 };
 
 //Очищает ошибки валидации формы и делает кнопку неактивной
@@ -97,16 +78,11 @@ function clearValidation(formElement, {inputErrorClass, errorClass, inactiveButt
     const buttonElement = formElement.querySelector('.popup__button');
 
     inputList.forEach(input => {
-        const errorElement = formElement.querySelector(`.${input.id}-error`);
-        input.classList.remove(inputErrorClass);
-        if (errorElement) {
-            errorElement.textContent = '';
-            errorElement.classList.remove(errorClass);
-        }
+        hideInputError(formElement, input, inputErrorClass, errorClass);
     });
 
-    buttonElement.classList.add(inactiveButtonClass);
-    buttonElement.disabled = true;
+    updateButtonState(buttonElement, false, inactiveButtonClass);
 };
 
 export{enableValidation, clearValidation};
+
