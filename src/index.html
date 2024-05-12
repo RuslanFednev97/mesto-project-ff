@@ -44,11 +44,11 @@
             class="popup__input popup__input_type_name" 
             placeholder="Имя" 
             id="name" 
-            data-error-message="Имя должно содержать от 2 до 40 латинских или кириллических символов, дефисов или пробелов."
-            required
-            pattern="^[a-zA-Zа-яА-Я\s\-]{2,40}$"
+            data-error-message="Разрешены только латинские, кириллические буквы, знаки дефиса и пробелы"
+            pattern="^[a-zA-Zа-яА-Я\s\-]+$"
             minlength="2"
-            maxlength="40">
+            maxlength="40"
+            required>
           <span class="form__input name-error"></span>
         </label>
         <label class="form__field">
@@ -58,11 +58,11 @@
             class="popup__input popup__input_type_description" 
             placeholder="Занятие" 
             id="description" 
-            data-error-message="Описание должно содержать от 2 до 200 латинских или кириллических символов, дефисов или пробелов." 
-            required
-            pattern="^[a-zA-Zа-яА-Я\s\-]{2,200}$"
+            data-error-message="Разрешены только латинские, кириллические буквы, знаки дефиса и пробелы" 
+            pattern="^[a-zA-Zа-яА-Я\s\-]+$"
             minlength="2"
-            maxlength="200">
+            maxlength="200"
+            required>
           <span class="form__input description-error"></span>
         </label>
         <button type="submit" class="button popup__button">Сохранить</button>
@@ -81,9 +81,9 @@
           class="popup__input popup__input_type_card-name" 
           placeholder="Название" 
           id="place-name" 
-          data-error-message="Описание должно содержать от 2 до 30 латинских или кириллических символов, дефисов или пробелов." 
+          data-error-message="Разрешены только латинские, кириллические буквы, знаки дефиса и пробелы" 
           required
-          pattern="^[a-zA-Zа-яА-Я\s\-]{2,30}$"
+          pattern="^[a-zA-Zа-яА-Я\s\-]+$"
           minlength="2"
           maxlength="30">
           <span class="form__input place-name-error"></span>

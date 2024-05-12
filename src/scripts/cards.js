@@ -1,22 +1,4 @@
-import { apiDeleteCard, putLike, removeLike } from "./api.js";
-
-//Функция удаления карточки
-function deleteCard(cardId) {
-  // Находим карточку по cardId или другому уникальному идентификатору
-  const cardElement = document.querySelector(`.places__item[data-card-id="${cardId}"]`);
-  if (cardElement) {
-    apiDeleteCard(cardId)
-      .then(() => {
-        cardElement.remove(); // Удаление элемента карточки
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  } else {
-    console.error("Card element not found");
-  }
-}
-
+import {putLike, removeLike } from "./api.js";
 
 //Функция лайка карточки
 const performActionLike = (like, cardId) => {
@@ -30,6 +12,11 @@ const performActionLike = (like, cardId) => {
   .catch((err) => {
     console.log(err);
   })
+}
+
+// Функция для удаления элемента карточки из DOM
+function removeCardElement(cardElement) {
+  cardElement.remove();
 }
 
 //Функция добавления карточек из сервера
@@ -66,4 +53,4 @@ function createCard(card, performActionLike, openCard, handleCardDeleteRequest, 
   return cardElement;
 };
 
-export {deleteCard, performActionLike, createCard};
+export {performActionLike, createCard, removeCardElement};

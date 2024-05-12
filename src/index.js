@@ -1,8 +1,8 @@
 import './pages/index.css';
-import {performActionLike, createCard, deleteCard} from './scripts/cards';
+import {performActionLike, createCard, removeCardElement} from './scripts/cards';
 import {openPopup, closePopup, closeModalOnOverlayClick} from './scripts/modal';
 import {enableValidation, clearValidation} from './scripts/validation';
-import {userInfo, card, editProfile, addingCard, patchAvatar} from './scripts/api';
+import {userInfo, card, editProfile, addingCard, patchAvatar, apiDeleteCard} from './scripts/api';
 
 //Переменные
 const popups = document.querySelectorAll('.popup');
@@ -126,11 +126,7 @@ function handleNewCardFormSubmit(evt) {
 
 //Вызов функции открытия модального окна "Редактировать профиль"
 profileEditButton.addEventListener('click', function(){   
-    clearValidation(cardsAvatar, {
-        inputErrorClass: validationSettings.inputErrorClass,
-        errorClass: validationSettings.errorClass,
-        inactiveButtonClass: validationSettings.inactiveButtonClass
-    });
+    clearValidation(profileForm, validationSettings);
     nameInput.value = profileTitle.textContent;
     jobInput.value = profileDescription.textContent;                      
     openPopup(popupTypeEdit);
@@ -143,11 +139,7 @@ profileCloseButton.addEventListener('click', function(){
 
 //Вызов функции открытия модального окна "Новое место"
 profileAddButton.addEventListener('click', function(){
-    clearValidation(cardsFormNewPlace, {
-        inputErrorClass: validationSettings.inputErrorClass,
-        errorClass: validationSettings.errorClass,
-        inactiveButtonClass: validationSettings.inactiveButtonClass
-    });
+    clearValidation(cardsFormNewPlace, validationSettings);
     openPopup(popupTypeNewCard);
 });
 
@@ -177,11 +169,7 @@ popupDeleteCloseButton.addEventListener('click', function(){
 
 //Вызов функции открытия модального окна "Аватар"
 profileImage.addEventListener('click', function(){
-    clearValidation(cardsAvatar, {
-        inputErrorClass: validationSettings.inputErrorClass,
-        errorClass: validationSettings.errorClass,
-        inactiveButtonClass: validationSettings.inactiveButtonClass
-    });
+    clearValidation(cardsAvatar, validationSettings);
     openPopup(popupAvatar);
 });
 
@@ -192,17 +180,33 @@ popupAvatarCloseButton.addEventListener('click', function(){
 
 // Обработчик события клика по кнопке подтверждения удаления в попапе
 confirmButton.addEventListener('click', () => {
-    if (cardState.currentCardId) {
-        deleteCard(cardState.currentCardId);
-        closePopup(popupDelete);
-    }
+    if (cardState.currentCardId && cardState.currentCardElement) {
+        apiDeleteCard(cardState.currentCardId)
+          .then(() => {
+            // Закрытие попапа
+            closePopup(popupDelete);
+            // Удаление элемента карточки из DOM
+            removeCardElement(cardState.currentCardElement);
+            // Очистка текущего состояния карточки
+            cardState.currentCardId = null;
+            cardState.currentCardElement = null;
+          })
+          .catch((err) => {
+            console.error('Ошибка при удалении карточки:', err);
+          });
+      } else {
+        console.error("Не заданы id или элемент карточки");
+      }
   });
   
-  function handleCardDeleteRequest(cardId, cardElement) {
+
+function handleCardDeleteRequest(cardId, cardElement) {
     cardState.currentCardId = cardId;
     cardState.currentCardElement = cardElement;
     openPopup(popupDelete);
   }
+
+
 
 // Функция обновления аватара
 function replaceAvatar(evt) {
